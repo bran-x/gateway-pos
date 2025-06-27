@@ -26,6 +26,7 @@ describe("Luhn Algorithm Validation", () => {
         const cards = [
             "4532015112830366", // 16 digits
             "4532015112830",    // 13 digits
+            // TODO: Add more valid card numbers with different lengths
         ];
         cards.forEach(card => {
             expect(luhnCheck(card)).toBe(true);
