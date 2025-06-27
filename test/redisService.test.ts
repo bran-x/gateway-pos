@@ -3,10 +3,10 @@ import { redisClient } from "../src/config/redis";
 describe("Redis Service", () => {
     const token = "test123tokenxyx";
     const payload = {
-        cardNumber: "1234567890123456",
+        card_number: "1234567890123456",
         cvv: "123",
-        expirationMonth: "12",
-        expirationYear: "2028",
+        expiration_month: "12",
+        expiration_year: "2028",
         email: "test@gmail.com"
     };
 
