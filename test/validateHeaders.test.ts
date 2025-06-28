@@ -2,6 +2,7 @@ import request from 'supertest';
 import express from 'express';
 import { Request, Response } from 'express';
 import { validateHeaders } from '../src/middlewares/validateHeaders';
+import { db } from '../src/config/postgres';
 
 const app = express();
 app.use(validateHeaders);
@@ -11,6 +12,10 @@ app.get('/test', (req: Request, res: Response) => {
 });
 
 describe('Header Validation Middleware', () => {
+    afterAll(() => {
+        db.destroy();
+    });
+
     it('should return 400 if pk header is missing', async () => {
         const response = await request(app)
             .get('/test');

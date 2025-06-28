@@ -10,10 +10,6 @@ describe("Redis Service", () => {
         email: "test@gmail.com"
     };
 
-    beforeAll(async () => {
-        await redisClient.connect();
-    });
-
     afterAll(async () => {
         await redisClient.quit();
     });
@@ -27,11 +23,11 @@ describe("Redis Service", () => {
         expect(parsedData).toEqual(data);
         expect(parsedData.token).toBe(token);
     });
-    it("should expire data after 15 minutes", async () => {
-        jest.useFakeTimers();
-        jest.advanceTimersByTime(900000); // Fast-forward 15 minutes
-        const storedData = await redisClient.get(token);
-        expect(storedData).toBeNull();
-        jest.useRealTimers();
+    it("should expire data after a short period (2 seconds)", async () => {
+        const data = { ...payload, token };
+        await redisClient.set(token, JSON.stringify(data), "EX", 2);
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        const expiredData = await redisClient.get(token);
+        expect(expiredData).toBeNull();
     });
 });

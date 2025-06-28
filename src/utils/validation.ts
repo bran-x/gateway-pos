@@ -1,3 +1,6 @@
+import { luhnCheck } from "./luhn";
+import { CardData } from "./types";
+
 /**
  * Validates whether an email address is valid based on specific domains.
  * @param email - The email address to validate.
@@ -48,9 +51,39 @@ function isValidYear(year: string): boolean {
     return yearNumber >= currentYear && yearNumber <= currentYear + 5;
 }
 
+/**
+ * Validates the card data before processing.
+ * @param cardData - The card data to validate.
+ * @returns { valid: boolean, error: string | null } - Returns an object indicating whether the card data is valid and any error message if invalid.
+ */
+function validateCardData(cardData: CardData): { valid: boolean, error: string | null } {
+    const { card_number, expiration_month, expiration_year, cvv, email } = cardData;
+    if (!card_number || !expiration_month || !expiration_year || !cvv || !email) {
+        return { valid: false, error: 'All fields are required.' };
+    }
+    if (!isValidEmail(email)) {
+        return { valid: false, error: 'Invalid email format.' };
+    }
+    if (!isValidMonth(expiration_month)) {
+        return { valid: false, error: 'Invalid expiration month.' };
+    }
+    if (!isValidYear(expiration_year)) {
+        return { valid: false, error: 'Invalid expiration year.' };
+    }
+    if (!isValidCVV(cvv)) {
+        return { valid: false, error: 'Invalid CVV.' };
+    }
+    if (!luhnCheck(card_number)) {
+        return { valid: false, error: 'Invalid card number.' };
+    }
+    return { valid: true, error: null };
+}
+
+
 export {
     isValidEmail,
     isValidCVV,
     isValidMonth,
-    isValidYear
+    isValidYear,
+    validateCardData
 };
