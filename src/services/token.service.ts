@@ -1,7 +1,7 @@
 import { redisClient } from '../config/redis';
 import { TokenRepository } from '../repositories/token.repository';
 import { generateToken } from '../utils/tokenGenerator';
-import { CardData } from '../utils/types';
+import { CardData } from '../types/card';
 
 /**
  * Creates a token for the given card data and stores it in Redis.

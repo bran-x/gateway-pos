@@ -1,5 +1,5 @@
 import { luhnCheck } from "./luhn";
-import { CardData } from "./types";
+import { CardData } from "../types/card";
 
 /**
  * Validates whether an email address is valid based on specific domains.

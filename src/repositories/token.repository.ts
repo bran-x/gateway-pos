@@ -1,5 +1,5 @@
 import { redisClient } from '../config/redis';
-import { CardData } from '../utils/types';
+import { CardData } from '../types/card';
 
 const EXPIRATION_TIME = 60 * 15;
 
