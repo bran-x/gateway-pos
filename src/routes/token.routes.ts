@@ -1,10 +1,19 @@
 import { Router, Request, Response } from 'express';
-import { isValidEmail, isValidCVV, isValidMonth, isValidYear, validateCardData } from '../utils/validation';
-import { CardData } from '../utils/types';
+import { validateCardData } from '../utils/validation';
 import { createToken, getCardDataFromToken } from '../services/token.service';
 
 const router = Router();
 
+/**
+ * Token generation endpoint.
+ * 
+ * @route POST /token
+ * @param {Request} req - The request object containing card data.
+ * @param {Response} res 
+ * @returns {201} - Returns the generated token on success.
+ * @returns {400} - Returns an error if the card data is invalid.
+ * @returns {500} - Returns an internal server error if something goes wrong.
+ */
 router.post('/token', async (req, res): Promise<any> => {
     const cardData = req.body;
     const { valid, error } = validateCardData(cardData);
@@ -22,6 +31,16 @@ router.post('/token', async (req, res): Promise<any> => {
 
 });
 
+/**
+ * Token retrieval endpoint.
+ * 
+ * @route GET /token/:token
+ * @param {Request} req - The request object containing the token as a URL parameter.
+ * @param {Response} res
+ * @returns {200} - Returns the card data associated with the token, excluding CVV.
+ * @returns {404} - Returns an error if the token is not found or expired.
+ * @returns {500} - Returns an internal server error if something goes wrong.
+ */
 router.get('/token/:token', async (req: Request, res: Response): Promise<any> => {
     const token = req.params.token;
     if (!token) {
