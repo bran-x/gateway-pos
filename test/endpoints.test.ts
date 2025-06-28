@@ -15,14 +15,14 @@ describe('Token API Endpoints', () => {
 
     it('should return 400 for missing Authorization header', async () => {
         const response = await request(app)
-            .post('/token')
+            .post('/tokens')
             .send(payload);
         expect(response.status).toBe(400);
     });
 
     it('should return 400 for invalid Authorization header', async () => {
         const response = await request(app)
-            .post('/token')
+            .post('/tokens')
             .set('Authorization', 'InvalidToken')
             .send(payload);
         expect(response.status).toBe(400);
@@ -30,7 +30,7 @@ describe('Token API Endpoints', () => {
     it('should return 400 for invalid card number', async () => {
         const invalidPayload = { ...payload, card_number: '1234567890123456' };
         const response = await request(app)
-            .post('/token')
+            .post('/tokens')
             .set(headers)
             .send(invalidPayload);
         expect(response.status).toBe(400);
@@ -38,7 +38,7 @@ describe('Token API Endpoints', () => {
 
     it('should create a token successfully', async () => {
         const response = await request(app)
-            .post('/token')
+            .post('/tokens')
             .set(headers)
             .send(payload);
         expect(response.status).toBe(201);
@@ -48,13 +48,13 @@ describe('Token API Endpoints', () => {
 
     it('should retrieve card data with a valid token', async () => {
         const response = await request(app)
-            .post('/token')
+            .post('/tokens')
             .set(headers)
             .send(payload);
         const token = response.body.token;
 
         const res = await request(app)
-            .get(`/token/${token}`)
+            .get(`/tokens/${token}`)
             .set(headers);
 
         expect(res.status).toBe(200);
@@ -70,7 +70,7 @@ describe('Token API Endpoints', () => {
     it('should return 404 for expired or invalid token', async () => {
         const invalidToken = 'invalidtoken1234';
         const response = await request(app)
-            .get(`/token/${invalidToken}`)
+            .get(`/tokens/${invalidToken}`)
             .set(headers);
         expect(response.status).toBe(404);
     });
