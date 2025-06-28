@@ -1,4 +1,5 @@
 import { redisClient } from '../config/redis';
+import { TokenRepository } from '../repositories/token.repository';
 import { generateToken } from '../utils/tokenGenerator';
 import { CardData } from '../utils/types';
 
@@ -8,19 +9,8 @@ import { CardData } from '../utils/types';
  * @returns {Promise<string>} - A promise that resolves to the generated token.
  */
 export async function createToken(cardData: CardData): Promise<string> {
-    let token: string;
-    let exists: string | null;
-    do {
-        token = generateToken();
-        exists = await redisClient.get(`token:${token}`);
-    } while (exists);
-
-    const payload = JSON.stringify({
-        ...cardData,
-        created_at: new Date().toISOString(),
-        token,
-    });
-    await redisClient.set(`token:${token}`, payload, 'EX', 900);
+    const token = generateToken();
+    await TokenRepository.saveToken(token, cardData);
     return token;
 }
 
@@ -30,11 +20,8 @@ export async function createToken(cardData: CardData): Promise<string> {
  * @returns {Promise<Partial<CardData> | null>} - A promise that resolves to the card data if found, or null if not found.
  */
 export async function getCardDataFromToken(token: string): Promise<Partial<CardData> | null> {
-    const data = await redisClient.get(`token:${token}`);
-    if (!data) {
-        return null;
-    }
-    const parsedData = JSON.parse(data);
-    delete parsedData.cvv;
-    return parsedData;
+    const data = await TokenRepository.getTokenData(token);
+    if (!data) return null;
+    const { cvv, ...cardData } = data;
+    return cardData;
 }
