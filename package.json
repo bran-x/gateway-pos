@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "migrate": "knex migrate:latest --knexfile src/config/knexfile.ts",
+    "seed": "knex seed:run --knexfile src/config/knexfile.ts"
   },
   "keywords": [],
   "author": "",
